@@ -15,7 +15,5 @@ times multiplier (Dollar amount) =
 
 
 amount : Dollar -> Int
-amount dollar =
-    case dollar of
-        Dollar amount ->
-            amount
+amount (Dollar amount) =
+    amount
