@@ -12,11 +12,18 @@ import Dollar exposing (..)
 all : Test
 all =
     describe "Money Test"
-        [ "Multiplication"
+        [ "Multiplication1"
             => let
-                amount =
-                    Dollar 5 |> Dollar.times 2 |> Dollar.amount
+                ten =
+                    Dollar 5 |> Dollar.times 2
                in
-                amount
-                    === 10
+                ten
+                    === Dollar 10
+        , "Multiplication2"
+            => let
+                fifteen =
+                    Dollar 5 |> Dollar.times 3
+               in
+                fifteen
+                    === Dollar 15
         ]
