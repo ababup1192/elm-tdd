@@ -6,13 +6,17 @@ import TestExp exposing (..)
 
 -- Test target modules
 
-import Hello as Hello
+import Dollar exposing (..)
 
 
 all : Test
 all =
-    describe "Hello Test"
-        [ "Hello"
-            => Hello.hello
-            === "hello"
+    describe "Money Test"
+        [ "Multiplication"
+            => let
+                amount =
+                    Dollar 5 |> Dollar.times 2 |> Dollar.amount
+               in
+                amount
+                    === 10
         ]
