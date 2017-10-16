@@ -14,6 +14,6 @@ times multiplier (Dollar amount) =
     Dollar <| multiplier * amount
 
 
-amount : Dollar -> Int
+amount : Dollar -> Amount
 amount (Dollar amount) =
     amount
