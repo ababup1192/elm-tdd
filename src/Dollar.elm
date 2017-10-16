@@ -11,7 +11,7 @@ type Dollar
 
 times : Int -> Dollar -> Dollar
 times multiplier (Dollar amount) =
-    Dollar <| 5 * 2
+    Dollar <| multiplier * amount
 
 
 amount : Dollar -> Int
