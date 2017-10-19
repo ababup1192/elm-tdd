@@ -1,4 +1,4 @@
-module Dollar exposing (..)
+module Dollar exposing (Dollar(..), times)
 
 
 type alias Amount =

@@ -7,6 +7,7 @@ import TestExp exposing (..)
 -- Test target modules
 
 import Dollar exposing (..)
+import Franc exposing (..)
 
 
 all : Test
