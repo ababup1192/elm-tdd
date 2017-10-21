@@ -14,4 +14,9 @@ import Expect exposing (Expectation)
     Expect.equal a b
 
 
+(/==) : a -> a -> () -> Expectation
+(/==) a b _ =
+    Expect.notEqual a b
+
+
 infixl 8 =>
