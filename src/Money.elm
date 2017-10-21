@@ -1,54 +1,39 @@
-module Money exposing (Money, times, dollar, franc, currency)
+module Money exposing (Money, Currency(..), times, dollar, franc, currency)
 
 
 type alias Amount =
     Int
 
 
-type alias Currency =
-    String
+type Currency
+    = USD
+    | CHF
 
 
 type Money
-    = Dollar Amount Currency
-    | Franc Amount Currency
+    = Money Amount Currency
 
 
 dollar : Amount -> Money
 dollar amount =
-    Dollar amount "USD"
+    Money amount USD
 
 
 franc : Amount -> Money
 franc amount =
-    Franc amount "CHF"
+    Money amount CHF
 
 
 times : Int -> Money -> Money
-times multiplier money =
-    case money of
-        Dollar amount _ ->
-            dollar <| multiplier * amount
-
-        Franc amount _ ->
-            franc <| multiplier * amount
+times multiplier (Money amount currency) =
+    Money (multiplier * amount) currency
 
 
 amount : Money -> Amount
-amount money =
-    case money of
-        Dollar amount _ ->
-            amount
-
-        Franc amount _ ->
-            amount
+amount (Money amount _) =
+    amount
 
 
 currency : Money -> Currency
-currency money =
-    case money of
-        Dollar _ currency ->
-            currency
-
-        Franc _ currency ->
-            currency
+currency (Money _ currency) =
+    currency

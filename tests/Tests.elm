@@ -21,7 +21,7 @@ all =
                 === dollar 15
             , "Currency"
                 => (currency <| dollar 5)
-                === "USD"
+                === USD
             ]
         , describe "Franc"
             [ "Multiplication1"
@@ -32,7 +32,7 @@ all =
                 === franc 15
             , "Currency"
                 => (currency <| franc 5)
-                === "CHF"
+                === CHF
             ]
         , describe "Equality"
             [ "Equality1"
