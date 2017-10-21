@@ -1,4 +1,4 @@
-module Money exposing (Money(..), times)
+module Money exposing (Money, times, dollar, franc)
 
 
 type alias Amount =
@@ -8,6 +8,16 @@ type alias Amount =
 type Money
     = Dollar Amount
     | Franc Amount
+
+
+dollar : Amount -> Money
+dollar amount =
+    Dollar amount
+
+
+franc : Amount -> Money
+franc amount =
+    Franc amount
 
 
 times : Int -> Money -> Money
