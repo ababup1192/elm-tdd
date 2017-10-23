@@ -1,4 +1,4 @@
-module Money exposing (Money, Currency(..), times, dollar, franc, currency)
+module Money exposing (Money, Currency(..), times, plus, dollar, franc, currency)
 
 
 type alias Amount =
@@ -27,6 +27,11 @@ franc amount =
 times : Int -> Money -> Money
 times multiplier (Money amount currency) =
     Money (multiplier * amount) currency
+
+
+plus : Money -> Money -> Money
+plus (Money amount1 currency) (Money amount2 _) =
+    Money (amount1 + amount2) currency
 
 
 amount : Money -> Amount

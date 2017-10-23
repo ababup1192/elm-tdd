@@ -7,6 +7,7 @@ import TestExp exposing (..)
 -- Test target modules
 
 import Money exposing (..)
+import Bank exposing (..)
 
 
 all : Test
@@ -50,5 +51,20 @@ all =
             , "Equality5"
                 => franc 1
                 /== franc 2
+            ]
+        , describe "Simple Addition"
+            [ "addition1"
+                => let
+                    five =
+                        dollar 5
+
+                    sum =
+                        plus five five
+
+                    reduced =
+                        reduce sum USD
+                   in
+                    dollar 10
+                        === reduced
             ]
         ]
