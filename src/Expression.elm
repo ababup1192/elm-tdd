@@ -1,7 +1,10 @@
-module Expression exposing (Expression)
+module Expression exposing (..)
 
-import Money.Model exposing (Currency, Money)
+import Money.Model exposing (Currency, Amount, Money)
+import Sum.Model exposing (Sum)
 
 
-type alias Expression =
-    Currency -> Money
+type Expression
+    = Expression (Currency -> Money)
+    | ExpressionMoney Money
+    | ExpressionSum Sum

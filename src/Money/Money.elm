@@ -1,8 +1,13 @@
 module Money.Money exposing (expression, times, plus, reduce, dollar, franc, currency)
 
 import Money.Model exposing (Money(..), Amount, Currency(..))
-import Sum exposing (Sum(..), reduce, expression)
-import Expression exposing (Expression)
+import Sum.Model exposing (Sum(..))
+import Expression exposing (Expression(..))
+
+
+expression : Money -> Expression
+expression =
+    ExpressionMoney
 
 
 dollar : Amount -> Money
@@ -15,24 +20,19 @@ franc amount =
     Money amount CHF
 
 
-expression : Money -> Expression
-expression money =
-    (\_ -> money)
-
-
 times : Int -> Money -> Money
 times multiplier (Money amount currency) =
     Money (multiplier * amount) currency
 
 
-plus : Money -> Money -> Sum
+plus : Money -> Money -> Expression
 plus money1 money2 =
-    Sum money1 money2
+    ExpressionSum <| Sum money1 money2
 
 
-reduce : Money -> Currency -> Expression
+reduce : Expression -> Currency -> Expression
 reduce money to =
-    expression money
+    money
 
 
 amount : Money -> Amount

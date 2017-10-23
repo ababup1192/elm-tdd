@@ -1,14 +1,11 @@
-module Sum exposing (..)
+module Sum.Sum exposing (..)
 
 import Money.Model exposing (Money(..), Currency)
-import Expression exposing (..)
+import Expression exposing (Expression(..))
+import Sum.Model exposing (Sum(..))
 
 
-type Sum
-    = Sum Money Money
-
-
-reduce : Sum -> Expression
+reduce : Sum -> Currency -> Money
 reduce (Sum (Money augend _) (Money addend _)) to =
     let
         amount =
@@ -18,5 +15,5 @@ reduce (Sum (Money augend _) (Money addend _)) to =
 
 
 expression : Sum -> Expression
-expression sum =
-    reduce sum
+expression =
+    ExpressionSum
