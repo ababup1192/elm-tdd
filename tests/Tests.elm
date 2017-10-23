@@ -6,8 +6,11 @@ import TestExp exposing (..)
 
 -- Test target modules
 
-import Money exposing (..)
+import Money.Money as Money exposing (..)
+import Money.Model exposing (..)
 import Bank exposing (..)
+import Expression exposing (..)
+import Sum exposing (..)
 
 
 all : Test
@@ -59,12 +62,45 @@ all =
                         dollar 5
 
                     sum =
-                        plus five five
+                        Sum.reduce <| plus five five
 
                     reduced =
-                        reduce sum USD
+                        Bank.reduce sum USD
                    in
                     dollar 10
                         === reduced
+            ]
+        , describe "Plus Returns Sum"
+            [ "addition1"
+                => let
+                    five =
+                        dollar 5
+
+                    result =
+                        plus five five
+                   in
+                    result
+                        === Sum five five
+            ]
+        , describe "Reduce Sum"
+            [ "addition1"
+                => let
+                    sum =
+                        Sum.reduce <| Sum (dollar 3) (dollar 4)
+
+                    result =
+                        Bank.reduce sum USD
+                   in
+                    dollar 7
+                        === result
+            ]
+        , describe "Reduce Money"
+            [ "reduce1"
+                => let
+                    money =
+                        Money.expression <| dollar 1
+                   in
+                    dollar 1
+                        === Bank.reduce money USD
             ]
         ]

@@ -1,8 +1,9 @@
 module Bank exposing (..)
 
-import Money exposing (..)
+import Money.Model exposing (Money, Currency)
+import Expression exposing (Expression)
 
 
-reduce : Money -> Currency -> Money
+reduce : Expression -> Currency -> Money
 reduce source to =
-    Money.dollar 10
+    source to
