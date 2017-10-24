@@ -9,8 +9,7 @@ import TestExp exposing (..)
 import Money.Money as Money exposing (..)
 import Money.Model exposing (..)
 import Bank exposing (..)
-import Sum.Sum as Sum
-import Sum.Model exposing (..)
+import Expression exposing (..)
 
 
 all : Test
@@ -80,13 +79,13 @@ all =
                         plus five five
                    in
                     result
-                        === Sum.expression (Sum five five)
+                        === Sum (Money.expression five) (Money.expression five)
             ]
         , describe "Reduce Sum"
             [ "addition1"
                 => let
                     sum =
-                        Sum.expression <| Sum (dollar 3) (dollar 4)
+                        Sum (Money.expression <| dollar 3) (Money.expression <| dollar 4)
 
                     result =
                         Bank.reduce sum USD

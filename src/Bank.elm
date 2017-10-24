@@ -1,18 +1,21 @@
 module Bank exposing (..)
 
-import Money.Model exposing (Money, Currency)
+import Money.Model exposing (Money(..), Currency)
 import Expression exposing (Expression(..))
-import Sum.Sum as Sum
 
 
 reduce : Expression -> Currency -> Money
 reduce source to =
     case source of
-        Expression expression ->
-            expression to
-
-        ExpressionMoney money ->
+        Single money ->
             money
 
-        ExpressionSum sum ->
-            Sum.reduce sum to
+        Sum exp1 exp2 ->
+            let
+                (Money added _) =
+                    reduce exp1 to
+
+                (Money adunt _) =
+                    reduce exp2 to
+            in
+                Money (added + adunt) to

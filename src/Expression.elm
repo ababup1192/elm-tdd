@@ -1,10 +1,8 @@
 module Expression exposing (..)
 
-import Money.Model exposing (Currency, Amount, Money)
-import Sum.Model exposing (Sum)
+import Money.Model exposing (Money)
 
 
 type Expression
-    = Expression (Currency -> Money)
-    | ExpressionMoney Money
-    | ExpressionSum Sum
+    = Single Money
+    | Sum Expression Expression
