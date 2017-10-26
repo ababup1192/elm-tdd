@@ -61,7 +61,7 @@ all =
                         dollar 5
 
                     sum =
-                        plus five five
+                        five $+ five
 
                     reduced =
                         Bank.reduce sum USD
@@ -76,16 +76,16 @@ all =
                         dollar 5
 
                     result =
-                        plus five five
+                        five $+ five
                    in
                     result
-                        === Sum (Money.expression five) (Money.expression five)
+                        === Expression.sum five five
             ]
         , describe "Reduce Sum"
             [ "addition1"
                 => let
                     sum =
-                        Sum (Money.expression <| dollar 3) (Money.expression <| dollar 4)
+                        Expression.sum (dollar 3) (dollar 4)
 
                     result =
                         Bank.reduce sum USD
