@@ -64,7 +64,7 @@ all =
                         five $+ five
 
                     reduced =
-                        Bank.reduce sum USD
+                        Bank.reduce sum USD Bank.Bank
                    in
                     dollar 10
                         === reduced
@@ -88,7 +88,7 @@ all =
                         Expression.sum (dollar 3) (dollar 4)
 
                     result =
-                        Bank.reduce sum USD
+                        Bank.reduce sum USD Bank.Bank
                    in
                     dollar 7
                         === result
@@ -100,6 +100,20 @@ all =
                         Money.expression <| dollar 1
                    in
                     dollar 1
-                        === Bank.reduce money USD
+                        === Bank.reduce money USD Bank.Bank
+            ]
+        , describe "Redice Money Dirrerent Currency"
+            [ "CHF => USD 2"
+                => let
+                    twoCHF =
+                        Money.expression <| franc 2
+
+                    bank =
+                        Bank.Bank |> Bank.addRate CHF USD 2
+
+                    result =
+                        Bank.reduce twoCHF USD bank
+                   in
+                    dollar 1 === result
             ]
         ]
