@@ -79,13 +79,13 @@ all =
                         five $+ five
                    in
                     result
-                        === Expression.sum five five
+                        === Sum five five
             ]
         , describe "Reduce Sum"
             [ "addition1"
                 => let
                     sum =
-                        Expression.sum (dollar 3) (dollar 4)
+                        (dollar 3) $+ (dollar 4)
 
                     result =
                         Bank.reduce sum USD Bank.bank
@@ -97,7 +97,7 @@ all =
             [ "reduce1"
                 => let
                     money =
-                        Money.expression <| dollar 1
+                        dollar 1
                    in
                     dollar 1
                         === Bank.reduce money USD Bank.bank
@@ -106,7 +106,7 @@ all =
             [ "CHF ~> USD 2"
                 => let
                     twoCHF =
-                        Money.expression <| franc 2
+                        franc 2
 
                     bank =
                         Bank.bank |> Bank.addRate (CHF ~> USD) 2
@@ -120,5 +120,22 @@ all =
             [ "USD ~> USD 1"
                 => 1
                 === Bank.rate (USD ~> USD) Bank.bank
+            ]
+        , describe "Mixed Addition"
+            [ "CHF ~> USD 2"
+                => let
+                    fiveBucks =
+                        dollar 5
+
+                    tenFrancs =
+                        franc 10
+
+                    bank =
+                        Bank.bank |> Bank.addRate (CHF ~> USD) 2
+
+                    result =
+                        Bank.reduce (fiveBucks $+ tenFrancs) USD bank
+                   in
+                    dollar 10 === result
             ]
         ]

@@ -1,6 +1,5 @@
 module Bank exposing (bank, rate, reduce, Bank, addRate, (~>))
 
-import Money.Money exposing (amount)
 import Money.Model exposing (Money(..), Currency(..))
 import Expression exposing (Expression(..))
 import EveryDict exposing (EveryDict)
@@ -38,18 +37,28 @@ rate (( from, to ) as fromto) bank =
                 Debug.crash <| (toString from) ++ " ~> " ++ (toString to) ++ " is not found."
 
 
-reduce : Expression -> Currency -> Bank -> Money
+reduce : Expression -> Currency -> Bank -> Expression
 reduce source to bank =
     case source of
-        Single (Money amount currency) ->
+        Single (Money amnt currency) ->
             let
                 r =
                     rate (currency ~> to) bank
             in
-                Money (amount // r) to
+                Single <| Money (amnt // r) to
 
         Sum exp1 exp2 ->
-            Money (sum_ exp1 exp2 to bank) to
+            Single <| Money (sum_ exp1 exp2 to bank) to
+
+
+amount : Expression -> Int
+amount expression =
+    case expression of
+        Single (Money amnt _) ->
+            amnt
+
+        Sum exp1 exp2 ->
+            (amount exp1) + (amount exp2)
 
 
 sum_ : Expression -> Expression -> Currency -> Bank -> Int
