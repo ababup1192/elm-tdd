@@ -1,7 +1,7 @@
 module Bank exposing (bank, rate, reduce, Bank, addRate, (~>))
 
 import Money.Model exposing (Money(..), Currency(..))
-import Expression exposing (Expression(..))
+import Expression exposing (Expression(..), amount)
 import EveryDict exposing (EveryDict)
 
 
@@ -51,20 +51,10 @@ reduce source to bank =
             Single <| Money (sum_ exp1 exp2 to bank) to
 
 
-amount : Expression -> Int
-amount expression =
-    case expression of
-        Single (Money amnt _) ->
-            amnt
-
-        Sum exp1 exp2 ->
-            (amount exp1) + (amount exp2)
-
-
 sum_ : Expression -> Expression -> Currency -> Bank -> Int
 sum_ exp1 exp2 to bank =
     let
         getAmount =
-            (\expression -> amount <| reduce expression to bank)
+            (\expression -> Expression.amount <| reduce expression to bank)
     in
         (getAmount exp1) + (getAmount exp2)
