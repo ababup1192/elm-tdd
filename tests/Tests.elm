@@ -17,10 +17,10 @@ all =
     describe "Money Test"
         [ describe "Dollar"
             [ "Multiplication1"
-                => (dollar 5 |> times 2)
+                => (dollar 5 $* 2)
                 === dollar 10
             , "Multiplication2"
-                => (dollar 5 |> times 3)
+                => (dollar 5 $* 3)
                 === dollar 15
             , "Currency"
                 => (currency <| dollar 5)
@@ -28,10 +28,10 @@ all =
             ]
         , describe "Franc"
             [ "Multiplication1"
-                => (franc 5 |> times 2)
+                => (franc 5 $* 2)
                 === franc 10
             , "Multiplication2"
-                => (franc 5 |> times 3)
+                => (franc 5 $* 3)
                 === franc 15
             , "Currency"
                 => (currency <| franc 5)
@@ -137,5 +137,45 @@ all =
                         Bank.reduce (fiveBucks $+ tenFrancs) USD bank
                    in
                     dollar 10 === result
+            ]
+        , describe "Sum Plus Money"
+            [ "($5 + 10 CHF) + $5"
+                => let
+                    fiveBucks =
+                        dollar 5
+
+                    tenFrancs =
+                        franc 10
+
+                    bank =
+                        Bank.bank |> Bank.addRate (CHF ~> USD) 2
+
+                    sum =
+                        Bank.reduce ((fiveBucks $+ tenFrancs) $+ fiveBucks) USD bank
+
+                    result =
+                        Bank.reduce sum USD bank
+                   in
+                    dollar 15 === result
+            ]
+        , describe "Sum Times"
+            [ "($5 + 10 CHF) * 2"
+                => let
+                    fiveBucks =
+                        dollar 5
+
+                    tenFrancs =
+                        franc 10
+
+                    bank =
+                        Bank.bank |> Bank.addRate (CHF ~> USD) 2
+
+                    sum =
+                        Bank.reduce ((fiveBucks $+ tenFrancs) $* 2) USD bank
+
+                    result =
+                        Bank.reduce sum USD bank
+                   in
+                    dollar 20 === result
             ]
         ]

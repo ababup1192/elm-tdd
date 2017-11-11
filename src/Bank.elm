@@ -37,14 +37,23 @@ rate (( from, to ) as fromto) bank =
                 Debug.crash <| (toString from) ++ " ~> " ++ (toString to) ++ " is not found."
 
 
-reduce : Expression -> Currency -> Bank -> Expression
 reduce source to bank =
-    map
-        (\(Money amnt currency) ->
+    case source of
+        Single (Money amnt currency) ->
             let
                 r =
                     rate (currency ~> to) bank
             in
-                Money (amnt // r) to
-        )
-        source
+                Single <| Money (amnt // r) to
+
+        Sum exp1 exp2 ->
+            Single <| Money (sum_ exp1 exp2 to bank) to
+
+
+sum_ : Expression -> Expression -> Currency -> Bank -> Int
+sum_ exp1 exp2 to bank =
+    let
+        getAmount =
+            (\expression -> Expression.amount <| reduce expression to bank)
+    in
+        (getAmount exp1) + (getAmount exp2)

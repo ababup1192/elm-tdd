@@ -1,4 +1,4 @@
-module Expression exposing (Expression(..), times, ($+), currency, amount, map)
+module Expression exposing (Expression(..), ($*), ($+), currency, amount, map)
 
 import Money.Model exposing (Money(..), Currency(..))
 
@@ -13,9 +13,9 @@ type Expression
     Sum exp1 exp2
 
 
-times : Int -> Expression -> Expression
-times multiplier expression =
-    map (\(Money amnt currency) -> Money (amnt * multiplier) currency) expression
+($*) : Expression -> Int -> Expression
+($*) exp multiplier =
+    map (\(Money amnt c) -> Money (amnt * multiplier) c) exp
 
 
 currency : Expression -> Currency
@@ -35,14 +35,7 @@ map f exp =
             Single <| f money
 
         Sum exp1 exp2 ->
-            let
-                getAmount =
-                    (\exp -> amount <| map f exp)
-
-                c =
-                    currency exp1
-            in
-                Single <| Money (getAmount exp1 + getAmount exp2) c
+            Sum (map f exp1) (map f exp2)
 
 
 fold : (Money -> a -> a) -> a -> Expression -> a
