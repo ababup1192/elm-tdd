@@ -12,15 +12,19 @@ import Bank exposing (..)
 import Expression exposing (..)
 
 
+bank =
+    Bank.bank |> Bank.addRate (CHF ~> USD) 2
+
+
 all : Test
 all =
     describe "Money Test"
         [ describe "Dollar"
             [ "Multiplication1"
-                => (dollar 5 $* 2)
+                => reduce bank USD ((unit <| dollar 5) $* 2)
                 === dollar 10
             , "Multiplication2"
-                => (dollar 5 $* 3)
+                => reduce bank USD ((unit <| dollar 5) $* 3)
                 === dollar 15
             , "Currency"
                 => (currency <| dollar 5)
@@ -28,10 +32,10 @@ all =
             ]
         , describe "Franc"
             [ "Multiplication1"
-                => (franc 5 $* 2)
+                => reduce bank CHF ((unit <| franc 5) $* 2)
                 === franc 10
             , "Multiplication2"
-                => (franc 5 $* 3)
+                => reduce bank CHF ((unit <| franc 5) $* 3)
                 === franc 15
             , "Currency"
                 => (currency <| franc 5)
@@ -58,37 +62,25 @@ all =
             [ "addition1"
                 => let
                     five =
-                        dollar 5
+                        unit <| dollar 5
 
                     sum =
                         five $+ five
 
                     reduced =
-                        Bank.reduce sum USD Bank.bank
+                        Expression.reduce bank USD sum
                    in
                     dollar 10
                         === reduced
-            ]
-        , describe "Plus Returns Sum"
-            [ "addition1"
-                => let
-                    five =
-                        dollar 5
-
-                    result =
-                        five $+ five
-                   in
-                    result
-                        === Sum five five
             ]
         , describe "Reduce Sum"
             [ "addition1"
                 => let
                     sum =
-                        (dollar 3) $+ (dollar 4)
+                        (unit <| dollar 3) $+ (unit <| dollar 4)
 
                     result =
-                        Bank.reduce sum USD Bank.bank
+                        Expression.reduce bank USD sum
                    in
                     dollar 7
                         === result
@@ -96,45 +88,39 @@ all =
         , describe "Reduce Money"
             [ "reduce1"
                 => let
-                    money =
-                        dollar 1
+                    unit_ =
+                        unit <| dollar 1
                    in
-                    dollar 1
-                        === Bank.reduce money USD Bank.bank
+                    Expression.reduce bank USD unit_ === dollar 1
             ]
-        , describe "Redice Money Dirrerent Currency"
+        , describe "Reduce Expression with Different Currency"
             [ "CHF ~> USD 2"
                 => let
                     twoCHF =
-                        franc 2
-
-                    bank =
-                        Bank.bank |> Bank.addRate (CHF ~> USD) 2
+                        unit <| franc 2
 
                     result =
-                        Bank.reduce twoCHF USD bank
+                        Expression.reduce bank USD twoCHF
                    in
-                    dollar 1 === result
+                    result === dollar 1
             ]
         , describe "Identity rate"
             [ "USD ~> USD 1"
-                => 1
-                === Bank.rate (USD ~> USD) Bank.bank
+                => Bank.rate (USD ~> USD) bank
+                === 1
             ]
         , describe "Mixed Addition"
             [ "CHF ~> USD 2"
                 => let
                     fiveBucks =
-                        dollar 5
+                        unit <| dollar 5
 
                     tenFrancs =
-                        franc 10
-
-                    bank =
-                        Bank.bank |> Bank.addRate (CHF ~> USD) 2
+                        unit <| franc 10
 
                     result =
-                        Bank.reduce (fiveBucks $+ tenFrancs) USD bank
+                        (fiveBucks $+ tenFrancs)
+                            |> Expression.reduce bank USD
                    in
                     dollar 10 === result
             ]
@@ -142,19 +128,14 @@ all =
             [ "($5 + 10 CHF) + $5"
                 => let
                     fiveBucks =
-                        dollar 5
+                        unit <| dollar 5
 
                     tenFrancs =
-                        franc 10
-
-                    bank =
-                        Bank.bank |> Bank.addRate (CHF ~> USD) 2
-
-                    sum =
-                        Bank.reduce ((fiveBucks $+ tenFrancs) $+ fiveBucks) USD bank
+                        unit <| franc 10
 
                     result =
-                        Bank.reduce sum USD bank
+                        ((fiveBucks $+ tenFrancs) $+ fiveBucks)
+                            |> Expression.reduce bank USD
                    in
                     dollar 15 === result
             ]
@@ -162,19 +143,14 @@ all =
             [ "($5 + 10 CHF) * 2"
                 => let
                     fiveBucks =
-                        dollar 5
+                        unit <| dollar 5
 
                     tenFrancs =
-                        franc 10
-
-                    bank =
-                        Bank.bank |> Bank.addRate (CHF ~> USD) 2
-
-                    sum =
-                        Bank.reduce ((fiveBucks $+ tenFrancs) $* 2) USD bank
+                        unit <| franc 10
 
                     result =
-                        Bank.reduce sum USD bank
+                        ((fiveBucks $+ tenFrancs) $* 2)
+                            |> Expression.reduce bank USD
                    in
                     dollar 20 === result
             ]

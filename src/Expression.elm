@@ -1,48 +1,70 @@
-module Expression exposing (Expression(..), ($*), ($+), currency, amount, map)
+module Expression exposing (Expression, ($*), ($+), add, mul, unit, reduce)
 
-import Money.Model exposing (Money(..), Currency(..))
+import Money.Model exposing (Money(..), Currency)
+import Money.Money exposing (amount, franc)
+import Bank exposing (Bank, rate, (~>))
 
 
 type Expression
-    = Single Money
-    | Sum Expression Expression
+    = Unit Money
+    | Add Expression Expression
+    | Multiple Expression Int
+
+
+unit : Money -> Expression
+unit =
+    Unit
+
+
+add : Expression -> Expression -> Expression
+add =
+    Add
 
 
 ($+) : Expression -> Expression -> Expression
-($+) exp1 exp2 =
-    Sum exp1 exp2
+($+) =
+    add
+
+
+mul : Expression -> Int -> Expression
+mul =
+    Multiple
 
 
 ($*) : Expression -> Int -> Expression
-($*) exp multiplier =
-    map (\(Money amnt c) -> Money (amnt * multiplier) c) exp
+($*) =
+    mul
 
 
-currency : Expression -> Currency
-currency exp =
-    fold (\(Money _ c) _ -> c) USD exp
+infixl 6 $+
 
 
-amount : Expression -> Int
-amount exp =
-    fold (\(Money amnt _) sum -> sum + amnt) 0 exp
+infixl 7 $*
 
 
-map : (Money -> Money) -> Expression -> Expression
-map f exp =
+reduce : Bank -> Currency -> Expression -> Money
+reduce bank to exp =
     case exp of
-        Single money ->
-            Single <| f money
+        Unit (Money amount currency) ->
+            let
+                r =
+                    rate (currency ~> to) bank
+            in
+                Money (amount // r) to
 
-        Sum exp1 exp2 ->
-            Sum (map f exp1) (map f exp2)
+        Add exp1 exp2 ->
+            let
+                res1 =
+                    reduce bank to exp1
 
+                res2 =
+                    reduce bank to exp2
+            in
+                Money (amount res1 + amount res2) to
 
-fold : (Money -> a -> a) -> a -> Expression -> a
-fold f init exp =
-    case exp of
-        Single money ->
-            f money init
-
-        Sum exp1 exp2 ->
-            fold f (fold f init exp1) exp2
+        Multiple exp_ multiplier ->
+            let
+                res =
+                    reduce bank to exp_
+            in
+                Money (amount res * multiplier) to

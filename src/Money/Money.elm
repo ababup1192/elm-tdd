@@ -1,14 +1,23 @@
-module Money.Money exposing (dollar, franc)
+module Money.Money exposing (dollar, franc, currency, amount)
 
 import Money.Model exposing (Money(..), Amount, Currency(..))
-import Expression exposing (Expression(..))
 
 
-dollar : Amount -> Expression
+dollar : Amount -> Money
 dollar amount =
-    Single <| Money amount USD
+    Money amount USD
 
 
-franc : Amount -> Expression
+franc : Amount -> Money
 franc amount =
-    Single <| Money amount CHF
+    Money amount CHF
+
+
+currency : Money -> Currency
+currency (Money _ c) =
+    c
+
+
+amount : Money -> Amount
+amount (Money a _) =
+    a

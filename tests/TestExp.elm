@@ -19,4 +19,10 @@ import Expect exposing (Expectation)
     Expect.notEqual a b
 
 
-infixl 8 =>
+infixl 3 =>
+
+
+infixl 4 ===
+
+
+infixl 4 /==
