@@ -1,70 +1,39 @@
-module Expression exposing (Expression, ($*), ($+), add, mul, unit, reduce)
+module Expression exposing (Expression(..), single, ($+), ($*))
 
 import Money.Model exposing (Money(..), Currency)
-import Money.Money exposing (amount, franc)
-import Bank exposing (Bank, rate, (~>))
 
 
 type Expression
-    = Unit Money
-    | Add Expression Expression
-    | Multiple Expression Int
+    = Single Money
+    | Sum Expression Expression
 
 
-unit : Money -> Expression
-unit =
-    Unit
-
-
-add : Expression -> Expression -> Expression
-add =
-    Add
+single : Money -> Expression
+single =
+    Single
 
 
 ($+) : Expression -> Expression -> Expression
 ($+) =
-    add
-
-
-mul : Expression -> Int -> Expression
-mul =
-    Multiple
+    Sum
 
 
 ($*) : Expression -> Int -> Expression
-($*) =
-    mul
+($*) exp multiplier =
+    map (\(Money amnt c) -> Money (amnt * multiplier) c) exp
+
+
+map : (Money -> Money) -> Expression -> Expression
+map f exp =
+    case exp of
+        Single money ->
+            Single <| f money
+
+        Sum exp1 exp2 ->
+            Sum (map f exp1) (map f exp2)
 
 
 infixl 6 $+
 
 
 infixl 7 $*
-
-
-reduce : Bank -> Currency -> Expression -> Money
-reduce bank to exp =
-    case exp of
-        Unit (Money amount currency) ->
-            let
-                r =
-                    rate (currency ~> to) bank
-            in
-                Money (amount // r) to
-
-        Add exp1 exp2 ->
-            let
-                res1 =
-                    reduce bank to exp1
-
-                res2 =
-                    reduce bank to exp2
-            in
-                Money (amount res1 + amount res2) to
-
-        Multiple exp_ multiplier ->
-            let
-                res =
-                    reduce bank to exp_
-            in
-                Money (amount res * multiplier) to
