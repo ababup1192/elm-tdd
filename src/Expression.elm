@@ -15,33 +15,34 @@ type Expression
 
 ($*) : Expression -> Int -> Expression
 ($*) exp multiplier =
-    case exp of
-        Single (Money amnt crncy) ->
-            Single <| Money (amnt * multiplier) crncy
-
-        Sum exp1 exp2 ->
-            let
-                mlp_ e =
-                    e $* multiplier
-            in
-                Sum (mlp_ exp1) (mlp_ exp2)
+    map (\(Money amnt c) -> Money (amnt * multiplier) c) exp
 
 
 currency : Expression -> Currency
-currency expression =
-    case expression of
-        Single (Money _ currency) ->
-            currency
-
-        Sum _ exp2 ->
-            currency exp2
+currency exp =
+    fold (\(Money _ c) _ -> c) USD exp
 
 
 amount : Expression -> Int
-amount expression =
-    case expression of
-        Single (Money amnt _) ->
-            amnt
+amount exp =
+    fold (\(Money amnt _) sum -> sum + amnt) 0 exp
+
+
+map : (Money -> Money) -> Expression -> Expression
+map f exp =
+    case exp of
+        Single money ->
+            Single <| f money
 
         Sum exp1 exp2 ->
-            (amount exp1) + (amount exp2)
+            Sum (map f exp1) (map f exp2)
+
+
+fold : (Money -> a -> a) -> a -> Expression -> a
+fold f init exp =
+    case exp of
+        Single money ->
+            f money init
+
+        Sum exp1 exp2 ->
+            fold f (fold f init exp1) exp2
